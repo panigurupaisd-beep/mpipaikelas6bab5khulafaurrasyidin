@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕌 Petualangan Khulafaurrasyidin - Media Pembelajaran Interaktif</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.0.3/index.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/amiri@5.0.18/index.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1B5E20;
+            --primary-light: #4CAF50;
+            --primary-lighter: #A5D6A7;
+            --gold: #FFB300;
+            --gold-light: #FFE082;
+            --accent: #0D47A1;
+            --accent-light: #42A5F5;
+            --bg: #F1F8E9;
+            --bg-card: #FFFFFF;
+            --text: #1B1B1B;
+            --text-light: #555;
+            --danger: #E53935;
+            --success: #2E7D32;
+            --warning: #FF8F00;
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .arabic-font {
+            font-family: 'Amiri', serif;
+            direction: rtl;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 30%, #1B5E20 60%, #004D40 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        #splash-screen.hide {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .splash-mosque {
+            font-size: 80px;
+            animation: floatUp 2s ease-in-out infinite;
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .splash-title {
+            color: var(--gold);
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 20px 0 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .splash-subtitle {
+            color: #A5D6A7;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .splash-btn {
+            background: linear-gradient(135deg, var(--gold), #FF8F00);
+            color: #1B5E20;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(255,179,0,0.4);
+            font-family: inherit;
+        }
+
+        .splash-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255,179,0,0.6);
+        }
+
+        .splash-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            color: var(--gold-light);
+            animation: twinkle 2s ease-in-out infinite;
+            font-size: 14px;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Main App */
+        #main-app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        #main-app.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary), #2E7D32);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar-title {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .badge-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,179,0,0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gold-light);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            padding: 8px 12px;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            scrollbar-width: none;
+        }
+
+        .nav-bar::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            background: #F5F5F5;
+            color: var(--text-light);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-item.completed {
+            background: var(--primary-lighter);
+            color: var(--primary);
+        }
+
+        .nav-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-icon.green { background: #E8F5E9; }
+        .card-icon.gold { background: #FFF8E1; }
+        .card-icon.blue { background: #E3F2FD; }
+        .card-icon.purple { background: #F3E5F5; }
+        .card-icon.red { background: #FFEBEE; }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #1B5E20, #2E7D32, #004D40);
+            border-radius: var(--radius);
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '🕌';
+            position: absolute;
+            font-size: 120px;
+            opacity: 0.1;
+            right: -20px;
+            top: -20px;
+        }
+
+        .hero-banner h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .hero-banner p {
+            opacity: 0.9;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        /* Learning Objectives */
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: #F1F8E9;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .objective-item:hover {
+            background: #E8F5E9;
+            transform: translateX(4px);
+        }
+
+        .objective-num {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-lighter);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--primary-lighter);
+        }
+
+        .timeline-item h4 {
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .timeline-item p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            border: 2px solid var(--primary-lighter);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .info-box.gold {
+            background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+            border-color: var(--gold-light);
+        }
+
+        .info-box.blue {
+            background: linear-gradient(135deg, #E3F2FD, #E8EAF6);
+            border-color: var(--accent-light);
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tabs */
+        .tab-container {
+            margin: 20px 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            background: white;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            border-color: var(--primary);
+            background: #E8F5E9;
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Interactive Activities */
+        .activity-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Drag and Drop */
+        .dnd-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .dnd-source {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .dnd-target {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .dnd-item {
+            padding: 12px 16px;
+            background: #E8F5E9;
+            border: 2px solid var(--primary-lighter);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .dnd-item:hover {
+            background: #C8E6C9;
+            transform: scale(1.02);
+        }
+
+        .dnd-item.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .dnd-dropzone {
+            min-height: 50px;
+            border: 2px dashed #BDBDBD;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .dnd-dropzone.over {
+            border-color: var(--primary);
+            background: #E8F5E9;
+        }
+
+        .dnd-dropzone.correct {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+
+        .dnd-dropzone.wrong {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+
+        .dropzone-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Matching Game */
+        .match-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .match-card {
+            padding: 14px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .match-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .match-card.selected {
+            border-color: var(--primary);
+            background: #E8F5E9;
+            box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
+        }
+
+        .match-card.matched {
+            border-color: var(--success);
+            background: #E8F5E9;
+            pointer-events: none;
+        }
+
+        .match-card.wrong-match {
+            border-color: var(--danger);
+            background: #FFEBEE;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Quiz */
+        .quiz-question {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-question-text {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 14px 18px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary);
+            background: #F1F8E9;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: #E8F5E9;
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .quiz-option.wrong .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .quiz-feedback.correct {
+            background: #E8F5E9;
+            color: var(--success);
+            border: 1px solid #A5D6A7;
+        }
+
+        .quiz-feedback.wrong {
+            background: #FFEBEE;
+            color: var(--danger);
+            border: 1px solid #EF9A9A;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #2E7D32);
+            color: white;
+            box-shadow: 0 4px 15px rgba(27,94,32,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(27,94,32,0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #FF8F00);
+            color: #1B5E20;
+            box-shadow: 0 4px 15px rgba(255,179,0,0.3);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,179,0,0.4);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: #E8F5E9;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--gold));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Badges */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .badge-item {
+            text-align: center;
+            padding: 16px 8px;
+            background: #F5F5F5;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .badge-item.earned {
+            background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+            border: 2px solid var(--gold);
+        }
+
+        .badge-item.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .badge-icon {
+            font-size: 36px;
+            margin-bottom: 6px;
+        }
+
+        .badge-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* Mind Map */
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), #2E7D32);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mindmap-branch {
+            background: white;
+            border: 2px solid var(--primary-lighter);
+            border-radius: 12px;
+            padding: 16px;
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mindmap-branch:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .mindmap-branch h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .mindmap-branch ul {
+            list-style: none;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-align: left;
+        }
+
+        .mindmap-branch ul li {
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .mindmap-branch ul li::before {
+            content: '•';
+            position: absolute;
+            left: 4px;
+            color: var(--primary);
+        }
+
+        /* Reflection */
+        .reflection-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--gold);
+        }
+
+        .reflection-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .reflection-textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .reflection-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Score Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: popIn 0.4s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-text {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin: 12px 0;
+        }
+
+        .accordion-item {
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 14px 18px;
+            background: #FAFAFA;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #F1F8E9;
+        }
+
+        .accordion-header.open {
+            background: #E8F5E9;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .accordion-body {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .accordion-body.open {
+            padding: 16px 18px;
+            max-height: 500px;
+        }
+
+        /* True/False */
+        .tf-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .tf-text {
+            font-size: 0.9rem;
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        .tf-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tf-btn {
+            padding: 6px 14px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .tf-btn:hover { border-color: var(--primary); }
+        .tf-btn.selected-correct { background: #E8F5E9; border-color: var(--success); color: var(--success); }
+        .tf-btn.selected-wrong { background: #FFEBEE; border-color: var(--danger); color: var(--danger); }
+
+        /* Fill in blank */
+        .fill-blank {
+            padding: 14px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .fill-blank-text {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .fill-input {
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        .fill-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .fill-input.correct { border-color: var(--success); background: #E8F5E9; }
+        .fill-input.wrong { border-color: var(--danger); background: #FFEBEE; }
+
+        /* Character Table */
+        .char-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .char-table th, .char-table td {
+            border: 1px solid #E0E0E0;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .char-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .char-table tr:nth-child(even) {
+            background: #F5F5F5;
+        }
+
+        .char-select {
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 500;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            max-width: 320px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 28px;
+        }
+
+        .toast-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-area { padding: 12px; }
+            .card { padding: 16px; }
+            .hero-banner { padding: 24px 16px; }
+            .hero-banner h1 { font-size: 1.4rem; }
+            .splash-title { font-size: 1.6rem; }
+            .dnd-container { flex-direction: column; }
+            .match-container { grid-template-columns: 1fr; }
+            .mindmap-branches { flex-direction: column; align-items: center; }
+            .tab-buttons { flex-direction: column; }
+            .top-bar-title { font-size: 0.85rem; }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background: #333;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Glossary */
+        .glossary-item {
+            padding: 12px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .glossary-term {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .glossary-def {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Level indicator */
+        .level-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .level-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 2px solid #E0E0E0;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .level-dot.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .level-dot.completed {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+
+        .level-line {
+            flex: 1;
+            height: 3px;
+            background: #E0E0E0;
+            border-radius: 2px;
+        }
+
+        .level-line.completed {
+            background: var(--gold);
+        }
+
+        /* Highlight */
+        .highlight {
+            background: linear-gradient(120deg, var(--gold-light) 0%, var(--gold-light) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Quote box */
+        .quote-box {
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+        .quote-source {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        /* Hotspot Image */
+        .hotspot-container {
+            position: relative;
+            background: linear-gradient(135deg, #E8F5E9, #E3F2FD);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            min-height: 200px;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 10px rgba(255,179,0,0.4);
+            z-index: 5;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .hotspot-info {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--shadow-lg);
+            width: 220px;
+            z-index: 10;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .hotspot-info.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: #F5F5F5;
+        }
+
+        .checklist-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #BDBDBD;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .checklist-item.checked .checklist-box {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .checklist-text {
+            font-size: 0.9rem;
+        }
+
+        .checklist-item.checked .checklist-text {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        /* Animations */
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Leaderboard */
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: #FAFAFA;
+        }
+
+        .leaderboard-rank {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .leaderboard-rank.gold { background: #FFF8E1; color: #F57F17; }
+        .leaderboard-rank.silver { background: #F5F5F5; color: #616161; }
+        .leaderboard-rank.bronze { background: #FBE9E7; color: #BF360C; }
+
+        .leaderboard-name { flex: 1; font-weight: 600; font-size: 0.9rem; }
+        .leaderboard-score { font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash-screen">
+    <div class="splash-stars">
+        <span class="star" style="top:10%;left:15%">✦</span>
+        <span class="star" style="top:20%;left:80%;animation-delay:0.5s">✦</span>
+        <span class="star" style="top:60%;left:10%;animation-delay:1s">✦</span>
+        <span class="star" style="top:70%;left:85%;animation-delay:0.3s">✦</span>
+        <span class="star" style="top:40%;left:50%;animation-delay:0.7s">✦</span>
+        <span class="star" style="top:80%;left:30%;animation-delay:1.2s">✦</span>
+        <span class="star" style="top:15%;left:60%;animation-delay:0.9s">✦</span>
+    </div>
+    <div class="splash-mosque">🕌</div>
+    <h1 class="splash-title">Petualangan Khulafaurrasyidin</h1>
+    <p class="splash-subtitle">Jasa-jasa Abu Bakar ash-Shiddiq & Umar bin Khattab untuk Dunia</p>
+    <p style="color:#A5D6A7; font-size:0.85rem; margin-bottom:20px;">Pendidikan Agama Islam & Budi Pekerti • Kelas VI SD</p>
+    <button class="splash-btn" onclick="startApp()">🚀 Mulai Belajar!</button>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <span class="toast-icon" id="toast-icon">⭐</span>
+    <span class="toast-text" id="toast-text">Selamat! Kamu mendapat 10 poin!</span>
+</div>
+
+<!-- Main App -->
+<div id="main-app">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <span style="font-size:24px">🕌</span>
+            <span class="top-bar-title">Petualangan Khulafaurrasyidin</span>
+        </div>
+        <div class="top-bar-right">
+            <div class="score-display">
+                <span>⭐</span>
+                <span id="total-score">0</span> poin
+            </div>
+            <div class="badge-display">
+                <span>🏅</span>
+                <span id="badge-count">0</span> lencana
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar" id="nav-bar">
+        <div class="nav-item active" data-page="home" onclick="navigateTo('home')">🏠 Beranda</div>
+        <div class="nav-item" data-page="objectives" onclick="navigateTo('objectives')">🎯 Tujuan</div>
+        <div class="nav-item" data-page="apersepsi" onclick="navigateTo('apersepsi')">💡 Apersepsi</div>
+        <div class="nav-item" data-page="materi-abu" onclick="navigateTo('materi-abu')">📖 Abu Bakar</div>
+        <div class="nav-item" data-page="materi-umar" onclick="navigateTo('materi-umar')">📖 Umar</div>
+        <div class="nav-item" data-page="aktivitas1" onclick="navigateTo('aktivitas1')">🎮 Aktivitas 1</div>
+        <div class="nav-item" data-page="aktivitas2" onclick="navigateTo('aktivitas2')">🎮 Aktivitas 2</div>
+        <div class="nav-item" data-page="kuis" onclick="navigateTo('kuis')">📝 Kuis</div>
+        <div class="nav-item" data-page="rangkuman" onclick="navigateTo('rangkuman')">📊 Rangkuman</div>
+        <div class="nav-item" data-page="refleksi" onclick="navigateTo('refleksi')">💭 Refleksi</div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+
+        <!-- PAGE: HOME -->
+        <div class="page active" id="page-home">
+            <div class="hero-banner">
+                <h1>🌟 Selamat Datang, Penjelajah!</h1>
+                <p>Mari belajar tentang jasa-jasa Khulafaurrasyidin yang luar biasa!</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">📚</div>
+                    <div>
+                        <div class="card-title">Materi Hari Ini</div>
+                        <div class="card-subtitle">Bab 5: Jasa Khulafaurrasyidin untuk Dunia</div>
+                    </div>
+                </div>
+                <p style="line-height:1.7; color: var(--text-light);">
+                    Di kelas 5, kalian sudah mengenal empat Khulafaurrasyidin: <strong>Abu Bakar ash-Shiddiq</strong>, <strong>Umar bin Khattab</strong>, <strong>Utsman bin Affan</strong>, dan <strong>Ali bin Abi Thalib</strong>. Kali ini, kita akan mempelajari lebih dalam tentang jasa-jasa <span class="highlight">Abu Bakar ash-Shiddiq</span> dan <span class="highlight">Umar bin Khattab</span> dalam mengembangkan dan menegakkan agama Islam!
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon gold">🗺️</div>
+                    <div>
+                        <div class="card-title">Peta Petualanganmu</div>
+                        <div class="card-subtitle">Ikuti langkah-langkah berikut untuk menyelesaikan petualangan!</div>
+                    </div>
+                </div>
+                <div class="level-bar">
+                    <div class="level-dot active" id="lv1">1</div>
+                    <div class="level-line" id="ll1"></div>
+                    <div class="level-dot" id="lv2">2</div>
+                    <div class="level-line" id="ll2"></div>
+                    <div class="level-dot" id="lv3">3</div>
+                    <div class="level-line" id="ll3"></div>
+                    <div class="level-dot" id="lv4">4</div>
+                    <div class="level-line" id="ll4"></div>
+                    <div class="level-dot" id="lv5">5</div>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+                    <span style="font-size:0.75rem; color:var(--text-light)">🎯 Tujuan → 💡 Apersepsi → 📖 Materi → 🎮 Aktivitas → 📝 Kuis</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon purple">🏅</div>
+                    <div>
+                        <div class="card-title">Lencana yang Bisa Kamu Dapatkan</div>
+                        <div class="card-subtitle">Kumpulkan semua lencana dengan menyelesaikan setiap misi!</div>
+                    </div>
+                </div>
+                <div class="badge-grid">
+                    <div class="badge-item locked" id="badge-penjelajah">
+                        <div class="badge-icon">🧭</div>
+                        <div class="badge-name">Penjelajah</div>
+                    </div>
+                    <div class="badge-item locked" id="badge-ilmu">
+                        <div class="badge-icon">📚</div>
+                        <div class="badge-name">Pencinta Ilmu</div>
+                    </div>
+                    <div class="badge-item locked" id="badge-cerdas">
+                        <div class="badge-icon">🧠</div>
+                        <div class="badge-name">Anak Cerdas</div>
+                    </div>
+                    <div class="badge-item locked" id="badge-hebat">
+                        <div class="badge-icon">🌟</div>
+                        <div class="badge-name">Luar Biasa</div>
+                    </div>
+                    <div class="badge-item locked" id="badge-kampiun">
+                        <div class="badge-icon">🏆</div>
+                        <div class="badge-name">Kampiun</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('objectives')">Mulai Petualangan! 🚀</button>
+            </div>
+        </div>
+
+        <!-- PAGE: OBJECTIVES -->
+        <div class="page" id="page-objectives">
+            <div class="section-header">
+                <h2>🎯 Tujuan Pembelajaran</h2>
+                <p>Setelah belajar, kamu diharapkan mampu:</p>
+            </div>
+
+            <div class="card">
+                <div class="objective-item">
+                    <div class="objective-num">1</div>
+                    <div>
+                        <strong>Menyebutkan nasab dan gelar</strong> Khalifah Abu Bakar ash-Shiddiq dan Umar bin Khattab
+                    </div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">2</div>
+                    <div>
+                        <strong>Menjelaskan dakwah</strong> Khalifah Abu Bakar ash-Shiddiq dan Umar bin Khattab
+                    </div>
+                </div>
+                <div class="objective-item">
+                    <div class="objective-num">3</div>
+                    <div>
+                        <strong>Menjelaskan jasa-jasa</strong> Khalifah Abu Bakar ash-Shiddiq dan Umar bin Khattab
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">📋</div>
+                    <div>
+                        <div class="card-title">Cek Kesiapanmu!</div>
+                        <div class="card-subtitle">Centang yang sudah kamu ketahui</div>
+                    </div>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text">Aku tahu siapa Khulafaurrasyidin</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text">Aku tahu nama asli Abu Bakar sebelum Islam</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text">Aku tahu arti gelar al-Faruq</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text">Aku tahu jasa Abu Bakar dalam mengumpulkan Al-Qur'an</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text">Aku tahu inovasi Umar bin Khattab sebagai khalifah</span>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('apersepsi')">Lanjut ke Apersepsi →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: APERSEPSI -->
+        <div class="page" id="page-apersepsi">
+            <div class="section-header">
+                <h2>💡 Apersepsi</h2>
+                <p>Mari kita mulai dengan mengingat kembali!</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon gold">📖</div>
+                    <div>
+                        <div class="card-title">Kisah Pembuka</div>
+                        <div class="card-subtitle">Saat Rasulullah saw. wafat...</div>
+                    </div>
+                </div>
+                <p style="line-height:1.8; color:var(--text-light);">
+                    Senin, 12 Rabi'ul Awwal tahun ke-11 Hijriah, Rasulullah saw. wafat. Kesedihan melanda Madinah. Umar bin Khattab sangat sedih dan berkata bahwa Rasulullah tidak meninggal, tetapi pergi ke hadapan Rabbnya seperti Nabi Musa.
+                </p>
+                <br>
+                <p style="line-height:1.8; color:var(--text-light);">
+                    Lalu <strong>Abu Bakar</strong> datang dan berkata dengan tegas:
+                </p>
+                <div class="quote-box">
+                    "Barang siapa di antara kalian menyembah Muhammad, maka sesungguhnya Muhammad telah meninggal dunia. Tetapi, barang siapa di antara kalian menyembah Allah, maka sesungguhnya Allah itu Maha Hidup dan tidak meninggal."
+                    <div class="quote-source">— Abu Bakar ash-Shiddiq</div>
+                </div>
+                <p style="line-height:1.8; color:var(--text-light); margin-top:12px;">
+                    Kemudian Abu Bakar membacakan <strong>Q.S. Ali 'Imran ayat 144</strong>. Semua orang tersadar, bahkan Umar bin Khattab pun menangis.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">🤔</div>
+                    <div>
+                        <div class="card-title">Pertanyaan Pemantik</div>
+                        <div class="card-subtitle">Pikirkan dan diskusikan dengan temanmu!</div>
+                    </div>
+                </div>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>❓ Mengapa Abu Bakar menenangkan umat Islam saat itu?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="accordion-body">
+                            <p>Karena umat Islam sedang dalam krisis keimanan. Banyak yang sedih dan bahkan ada yang ragu. Abu Bakar mengingatkan bahwa kita menyembah Allah, bukan manusia. Allah Maha Hidup dan tidak akan meninggal.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>❓ Apa yang terjadi setelah Rasulullah wafat?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="accordion-body">
+                            <p>Para sahabat bermusyawarah di Saqifah Bani Sa'idah dan sepakat mengangkat Abu Bakar sebagai khalifah (pemimpin) pertama umat Islam. Kemudian muncul tantangan seperti nabi palsu, orang murtad, dan orang yang enggan membayar zakat.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>❓ Apa saja yang dilakukan Umar bin Khattab yang masih kita rasakan manfaatnya sampai sekarang?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="accordion-body">
+                            <p>Banyak! Di antaranya: kalender Hijriyah, lembaga peradilan (pengadilan), kepolisian, pencatatan kekayaan pejabat (seperti LHKSN sekarang), dan sistem keuangan negara.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box gold">
+                <div class="info-box-title">💡 Tahukah Kamu?</div>
+                <p>Kata <strong>"Khulafaurrasyidin"</strong> berarti "para pemimpin yang mendapat petunjuk". Mereka adalah empat sahabat Nabi yang menjadi pemimpin setelah Rasulullah saw. wafat.</p>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('materi-abu')">Masuki Materi Abu Bakar →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: MATERI ABU BAKAR -->
+        <div class="page" id="page-materi-abu">
+            <div class="section-header">
+                <h2>📖 A. Abu Bakar ash-Shiddiq</h2>
+                <p>Khalifah pertama dan sahabat terdekat Rasulullah</p>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab(this, 'ab-nasab')">👤 Nasab & Gelar</button>
+                    <button class="tab-btn" onclick="switchTab(this, 'ab-dakwah')">📢 Dakwah</button>
+                    <button class="tab-btn" onclick="switchTab(this, 'ab-jasa')">🏆 Jasa-Jasa</button>
+                </div>
+
+                <!-- Tab: Nasab -->
+                <div class="tab-content active" id="tab-ab-nasab">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon green">👤</div>
+                            <div>
+                                <div class="card-title">1. Nasab dan Gelar Abu Bakar</div>
+                            </div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4>📛 Nama Asli</h4>
+                                <p>Sebelum Islam bernama <strong>Abdul Ka'bah</strong>. Setelah masuk Islam, Rasulullah saw. memberinya nama <strong>Abdullah</strong>.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🏷️ Nama Abu Bakar</h4>
+                                <p>Diberi nama <strong>Abu Bakar</strong> karena <em>Abu</em> = Bapak, <em>Bakar</em> = segera. Beliau segera masuk Islam ketika Muhammad diangkat menjadi Nabi.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>👨‍👩‍👦 Orang Tua</h4>
+                                <p>Ayah: <strong>Abu Qahafah</strong> (Utsman bin Amir)<br>Ibu: <strong>Ummul Khair</strong> (Salma binti Shakhr bin Amir)</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🏅 Gelar al-Shiddiq</h4>
+                                <p>Artinya <strong>"yang sangat benar"</strong>. Gelar dari Allah melalui lisan Nabi karena selalu membenarkan apa yang disampaikan Rasulullah, terutama saat peristiwa <strong>Isra' Mi'raj</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box gold">
+                        <div class="info-box-title">📜 Kisah Gelar al-Shiddiq</div>
+                        <p>Ketika Nabi saw. melakukan Isra' Mi'raj, banyak orang yang tidak percaya dan kembali murtad. Mereka menguji Abu Bakar: <em>"Apakah engkau percaya sahabatmu pergi ke Baitul Maqdis semalam?"</em></p>
+                        <br>
+                        <p>Abu Bakar dengan tegas menjawab: <em>"Ya, dan aku akan terus membenarkan meskipun beliau mengatakan yang lebih jauh dari itu. Aku membenarkan dengan kabar langit."</em></p>
+                        <br>
+                        <p>Sejak saat itulah beliau dijuluki <strong>al-Shiddiq</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Dakwah -->
+                <div class="tab-content" id="tab-ab-dakwah">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon blue">📢</div>
+                            <div>
+                                <div class="card-title">2. Dakwah Abu Bakar ash-Shiddiq</div>
+                            </div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4>🤝 Orang Pertama Masuk Islam dari Kalangan Laki-laki Dewasa</h4>
+                                <p>Abu Bakar segera beriman dan mengajak sahabat dekatnya: <strong>Utsman, Zubair, Thalhah, Abdurrahman, dan Sa'ad bin Abi Waqqash</strong>. Dengan hartanya, ia memerdekakan 7 budak yang disiksa karena Islam, termasuk <strong>Bilal, Ammar, dan Zunairah</strong>.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>✅ Membenarkan Isra' Mi'raj</h4>
+                                <p>Saat orang-orang murtad karena tidak percaya Isra' Mi'raj, Abu Bakar dengan tegas menyatakan kepercayaannya kepada Rasulullah saw.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🏃 Berhijrah Bersama Nabi</h4>
+                                <p>Abu Bakar berhijrah bersama Rasulullah saw., bersembunyi di <strong>Gua Tsur</strong> selama beberapa hari dari kejaran kafir Quraisy.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>💪 Menenangkan Umat saat Nabi Wafat</h4>
+                                <p>Saat umat Islam dalam krisis keimanan, Abu Bakar tampil tegar menenangkan dengan kata-kata yang menyadarkan bahwa kita menyembah Allah yang Maha Hidup.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Jasa -->
+                <div class="tab-content" id="tab-ab-jasa">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon gold">🏆</div>
+                            <div>
+                                <div class="card-title">3. Jasa-Jasa Abu Bakar sebagai Khalifah</div>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">🤝 Menjaga Persatuan</div>
+                            <p>Hasil musyawarah di <strong>Saqifah Bani Sa'idah</strong>, Abu Bakar diangkat menjadi khalifah pertama. Beliau mempersatukan kaum Anshar dan Muhajirin.</p>
+                        </div>
+
+                        <div class="info-box gold">
+                            <div class="info-box-title">💪 Membangkitkan Kepercayaan Diri</div>
+                            <p>Mengirimkan ekspedisi pasukan <strong>Usamah bin Zaid</strong> dengan membawa 11 panji Rasulullah saw., meskipun banyak yang kurang setuju. Pasukan ini berhasil menggetarkan daerah yang dilewati dan membuat kabilah yang berniat memisah menjadi takut.</p>
+                        </div>
+
+                        <div class="info-box blue">
+                            <div class="info-box-title">⚔️ Menegakkan Keimanan dan Hukum</div>
+                            <p>• Menumpas <strong>nabi palsu</strong> seperti Musailamah al-Kazzab dan Aswad al-Ansi<br>
+                            • Menumpas <strong>orang murtad</strong> di seluruh Jazirah Arab<br>
+                            • Menegakkan <strong>syariat Islam</strong>: zakat tidak boleh dipisahkan dari salat</p>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">📖 Kodifikasi Al-Qur'an</div>
+                            <p>Atas usulan <strong>Umar bin Khattab</strong>, setelah 700 penghafal Al-Qur'an gugur dalam Perang Yamamah, Abu Bakar menugaskan <strong>Zaid bin Tsabit</strong> mengumpulkan Al-Qur'an dari pelepah kurma, tulang, kulit hewan, batu, dan hafalan para sahabat menjadi <strong>satu mushaf</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: linear-gradient(135deg, #FFF8E1, #FFFDE7);">
+                        <div class="card-header">
+                            <div class="card-icon gold">📅</div>
+                            <div>
+                                <div class="card-title">Akhir Hayat Abu Bakar</div>
+                            </div>
+                        </div>
+                        <p style="line-height:1.7;">
+                            Wafat: <strong>Senin malam, 22 Jumadil Akhir 13 H</strong>, usia 63 tahun.<br>
+                            Masa kekhalifahan: <strong>2 tahun</strong>.<br>
+                            Sakit panas selama 15 hari.<br><br>
+                            Kalimat terakhir: <em>"Wafatkanlah aku dalam keadaan Islam dan gabungkanlah aku dengan orang-orang yang shaleh"</em> (Q.S. Yusuf/12: 101)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('materi-umar')">Lanjut ke Materi Umar →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: MATERI UMAR -->
+        <div class="page" id="page-materi-umar">
+            <div class="section-header">
+                <h2>📖 B. Umar bin Khattab</h2>
+                <p>Khalifah kedua, al-Faruq yang membedakan hak dan batil</p>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab(this, 'um-nasab')">👤 Nasab & Gelar</button>
+                    <button class="tab-btn" onclick="switchTab(this, 'um-dakwah')">📢 Dakwah</button>
+                    <button class="tab-btn" onclick="switchTab(this, 'um-jasa')">🏆 Jasa-Jasa</button>
+                </div>
+
+                <!-- Tab: Nasab -->
+                <div class="tab-content active" id="tab-um-nasab">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon green">👤</div>
+                            <div>
+                                <div class="card-title">1. Nasab dan Gelar Umar bin Khattab</div>
+                            </div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4>📅 Kelahiran</h4>
+                                <p>Lahir <strong>13 tahun setelah Tahun Gajah</strong>.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>👨‍👩‍👦 Orang Tua</h4>
+                                <p>Ayah: <strong>Khattab</strong> — Ibu: <strong>Hantamah</strong></p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>⚔️ Sebelum Islam</h4>
+                                <p>Tumbuh dalam keberanian dan keperwiraan. Menjadi tokoh Quraisy, pembenci Islam, bahkan pernah berencana membunuh Nabi Muhammad saw.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>☪️ Masuk Islam</h4>
+                                <p>Tahun ke-6 kenabian, orang ke-<strong>40</strong> yang masuk Islam. Keislamannya dimohonkan Rasulullah dalam doa: <em>"Ya Allah, muliakanlah Islam dengan salah seorang yang lebih Engkau cintai: Abu Jahal atau Umar bin Khattab."</em></p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🏅 Gelar al-Faruq</h4>
+                                <p>Artinya <strong>"yang membedakan antara yang hak dan batil"</strong>. Diberikan oleh Rasulullah saw. karena keberaniannya menegakkan kebenaran.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box gold">
+                        <div class="info-box-title">📜 Kisah Keislaman Umar</div>
+                        <p>Umar pergi untuk membunuh Nabi, tapi di perjalanan Nu'aim memberitahu bahwa adik dan iparnya sudah masuk Islam. Umar pergi ke rumah adiknya <strong>Fatimah</strong>, mendobrak pintu, dan mendengar bacaan <strong>awal Surah Thaha</strong>.</p>
+                        <br>
+                        <p>Setelah membaca lembaran itu, hatinya luluh. <em>"Alangkah indahnya kalimat ini!"</em> ujarnya. Kemudian Umar menemui Rasulullah dan menyatakan keislamannya. Kaum muslimin bertakbir penuh kegembiraan!</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Dakwah -->
+                <div class="tab-content" id="tab-um-dakwah">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon blue">📢</div>
+                            <div>
+                                <div class="card-title">2. Dakwah Umar bin Khattab</div>
+                            </div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4>📣 Dakwah Terang-terangan</h4>
+                                <p>Umar mengumumkan keislamannya dan menjamin keamanan Rasulullah untuk berdakwah secara terbuka. Sejak itu, kaum muslimin bisa salat di depan <strong>Baitullah (Ka'bah)</strong>.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🤝 Setia Menemani Nabi</h4>
+                                <p>Kesetiaannya diumpamakan seperti <em>tubuh dengan kepala, bayangan dengan pemiliknya, siang dengan malam</em>.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>💬 Berani Menyampaikan Pendapat</h4>
+                                <p>Tidak sungkan menyampaikan pendapat kepada Rasulullah. Pernah melarang Nabi menyalatkan jenazah orang munafik, lalu turun wahyu yang membenarkannya.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>🌙 Salat Tarawih Berjamaah</h4>
+                                <p>Orang pertama yang memerintahkan salat malam Ramadan berjamaah dengan satu imam.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>👩 Kebebasan Berpendapat</h4>
+                                <p>Memberi kebebasan berpendapat kepada laki-laki dan perempuan. Pernah mengakui: <em>"Perempuan itu benar dan Umar yang salah."</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Jasa -->
+                <div class="tab-content" id="tab-um-jasa">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon gold">🏆</div>
+                            <div>
+                                <div class="card-title">3. Jasa-Jasa Umar bin Khattab sebagai Khalifah</div>
+                            </div>
+                        </div>
+                        <p style="margin-bottom:16px; color:var(--text-light);">Umar digelari <strong>Amirul Mukminin</strong> (Pemimpin Orang Beriman). Ia dikenal sebagai khalifah yang jenius dan banyak menciptakan hal baru!</p>
+
+                        <div class="info-box">
+                            <div class="info-box-title">💰 Keuangan Negara</div>
+                            <p>Menciptakan peraturan keuangan negara. Mewajibkan <strong>pendaftaran kekayaan pejabat</strong> untuk mencegah korupsi (seperti LHKSN sekarang!).</p>
+                        </div>
+
+                        <div class="info-box gold">
+                            <div class="info-box-title">👮 Keamanan & Pertahanan</div>
+                            <p>Mendirikan <strong>lembaga kepolisian</strong> dan <strong>korps militer</strong> untuk keamanan dan ketertiban masyarakat. Mereka digaji sesuai tugasnya.</p>
+                        </div>
+
+                        <div class="info-box blue">
+                            <div class="info-box-title">⚖️ Lembaga Peradilan</div>
+                            <p>Membangun lembaga peradilan, mengangkat para <strong>qadhi (hakim)</strong>, dan meletakkan dasar ilmu kehakiman.</p>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">🏙️ Pembangunan Kota</div>
+                            <p>• Kota <strong>Fustat</strong> di Mesir oleh Amr bin Ash<br>
+                            • Kota <strong>Kufah</strong> oleh Sa'ad bin Abi Waqqash<br>
+                            • Kota <strong>Basrah</strong> di Iraq oleh Atbah bin Khazwan</p>
+                        </div>
+
+                        <div class="info-box gold">
+                            <div class="info-box-title">🕌 Pengelolaan Masjid</div>
+                            <p>Memberi gaji imam dan muazin, pengadaan lampu penerangan masjid, pengorganisasian khutbah, dan pendirian <strong>Baitul Mal</strong>.</p>
+                        </div>
+
+                        <div class="info-box blue">
+                            <div class="info-box-title">📅 Kalender Hijriyah</div>
+                            <p>Menciptakan <strong>penanggalan kalender Hijriyah</strong>, dimulai dari peristiwa hijrah Nabi dari Makkah ke Madinah, dimulai bulan Muharram.</p>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">📝 Pembukuan Sejarah</div>
+                            <p>Orang pertama yang <strong>mencatat dan menulis sejarah</strong> dalam bentuk buku.</p>
+                        </div>
+
+                        <div class="info-box gold">
+                            <div class="info-box-title">❤️ Kepedulian Sosial</div>
+                            <p>Mengasihi fakir miskin, mendatangi pasar untuk mengendalikan harga, dan melakukan <strong>operasi bantuan pangan dari rumah ke rumah</strong>. Umar memanggul karung sendiri!</p>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: linear-gradient(135deg, #E3F2FD, #E8EAF6);">
+                        <div class="card-header">
+                            <div class="card-icon blue">📅</div>
+                            <div>
+                                <div class="card-title">Akhir Hayat Umar</div>
+                            </div>
+                        </div>
+                        <p style="line-height:1.7;">
+                            Masa kekhalifahan: <strong>10 tahun</strong> (13-23 H).<br>
+                            Wafat syahid: <strong>Rabu, 25 Zulhijjah 23 H</strong>.<br>
+                            Ditikam saat menjadi imam salat Subuh oleh <strong>Abu Lu'lu'ah Fairuz</strong>, seorang Majusi dari Persia.<br><br>
+                            Dimakamkan di kamar Nabi saw., bersebelahan dengan makam Rasulullah dan Abu Bakar ash-Shiddiq.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('aktivitas1')">Lanjut ke Aktivitas 1 →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: AKTIVITAS 1 - Matching Game -->
+        <div class="page" id="page-aktivitas1">
+            <div class="section-header">
+                <h2>🎮 Aktivitas 1: Cocokkan Pasangan!</h2>
+                <p>Klik kartu di kiri, lalu klik pasangannya di kanan</p>
+            </div>
+
+            <div class="activity-container">
+                <div class="activity-title">🔗 Pasangkan Tokoh dengan Keterangan yang Tepat!</div>
+                <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">Klik satu kartu di kolom kiri, lalu klik pasangannya di kolom kanan.</p>
+                <div class="match-container" id="match-game-1">
+                    <!-- Left column -->
+                    <div>
+                        <div class="match-card" data-match="A" data-side="left" onclick="selectMatch(this)">Abdul Ka'bah</div>
+                        <div class="match-card" data-match="B" data-side="left" onclick="selectMatch(this)">al-Shiddiq</div>
+                        <div class="match-card" data-match="C" data-side="left" onclick="selectMatch(this)">al-Faruq</div>
+                        <div class="match-card" data-match="D" data-side="left" onclick="selectMatch(this)">Zaid bin Tsabit</div>
+                        <div class="match-card" data-match="E" data-side="left" onclick="selectMatch(this)">Amirul Mukminin</div>
+                    </div>
+                    <!-- Right column (shuffled) -->
+                    <div>
+                        <div class="match-card" data-match="C" data-side="right" onclick="selectMatch(this)">Pembeda hak dan batil</div>
+                        <div class="match-card" data-match="A" data-side="right" onclick="selectMatch(this)">Nama asli Abu Bakar</div>
+                        <div class="match-card" data-match="E" data-side="right" onclick="selectMatch(this)">Gelar Umar sebagai khalifah</div>
+                        <div class="match-card" data-match="B" data-side="right" onclick="selectMatch(this)">Yang sangat benar</div>
+                        <div class="match-card" data-match="D" data-side="right" onclick="selectMatch(this)">Pengumpul Al-Qur'an</div>
+                    </div>
+                </div>
+                <div id="match-result-1" style="margin-top:16px; text-align:center; font-weight:600;"></div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('aktivitas2')">Lanjut ke Aktivitas 2 →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: AKTIVITAS 2 - True/False -->
+        <div class="page" id="page-aktivitas2">
+            <div class="section-header">
+                <h2>🎮 Aktivitas 2: Benar atau Salah?</h2>
+                <p>Tentukan apakah pernyataan berikut benar atau salah!</p>
+            </div>
+
+            <div class="activity-container">
+                <div class="activity-title">✅❌ Uji Pengetahuanmu!</div>
+                <div id="tf-container">
+                    <div class="tf-item" data-answer="true">
+                        <span class="tf-text">1. Nama asli Abu Bakar sebelum Islam adalah Abdul Ka'bah.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="false">
+                        <span class="tf-text">2. Umar bin Khattab adalah orang pertama yang masuk Islam.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="true">
+                        <span class="tf-text">3. Abu Bakar mengusulkan pengumpulan Al-Qur'an menjadi satu mushaf.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="false">
+                        <span class="tf-text">4. Umar bin Khattab menjadi khalifah selama 2 tahun.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="true">
+                        <span class="tf-text">5. Umar menciptakan kalender Hijriyah.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="true">
+                        <span class="tf-text">6. Abu Bakar menumpas pemberontakan nabi palsu Musailamah al-Kazzab.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="false">
+                        <span class="tf-text">7. Umar bin Khattab wafat karena sakit panas.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                    <div class="tf-item" data-answer="true">
+                        <span class="tf-text">8. Abu Bakar berhijrah bersama Nabi dan bersembunyi di Gua Tsur.</span>
+                        <div class="tf-buttons">
+                            <button class="tf-btn" onclick="checkTF(this, true)">✅ Benar</button>
+                            <button class="tf-btn" onclick="checkTF(this, false)">❌ Salah</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tf-result" style="margin-top:16px; text-align:center; font-weight:600;"></div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('kuis')">Lanjut ke Kuis →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: KUIS -->
+        <div class="page" id="page-kuis">
+            <div class="section-header">
+                <h2>📝 Kuis Formatif</h2>
+                <p>Uji pemahamanmu! Jawab semua pertanyaan berikut.</p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="quiz-progress" style="width: 0%"></div>
+            </div>
+            <p style="text-align:center; font-size:0.85rem; color:var(--text-light); margin-bottom:20px;">
+                Soal <span id="quiz-current">1</span> dari <span id="quiz-total">8</span>
+            </p>
+
+            <div id="quiz-container"></div>
+
+            <div id="quiz-final-result" style="display:none; text-align:center;">
+                <div class="card" style="background: linear-gradient(135deg, #E8F5E9, #FFF8E1);">
+                    <div style="font-size:48px; margin-bottom:12px;" id="quiz-emoji">🌟</div>
+                    <h3 id="quiz-result-title" style="color:var(--primary); margin-bottom:8px;"></h3>
+                    <p id="quiz-result-text" style="color:var(--text-light); margin-bottom:16px;"></p>
+                    <p style="font-size:1.4rem; font-weight:700; color:var(--primary);">Skor: <span id="quiz-score-display">0</span>/8</p>
+                </div>
+                <div style="margin-top:16px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                    <button class="btn btn-outline" onclick="resetQuiz()">🔄 Ulangi Kuis</button>
+                    <button class="btn btn-primary" onclick="navigateTo('rangkuman')">Lihat Rangkuman →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: RANGKUMAN -->
+        <div class="page" id="page-rangkuman">
+            <div class="section-header">
+                <h2>📊 Rangkuman Materi</h2>
+                <p>Peta konsep jasa-jasa Khulafaurrasyidin</p>
+            </div>
+
+            <div class="card">
+                <div class="mindmap">
+                    <div class="mindmap-center">🕌 Khulafaurrasyidin</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <h4>👤 Abu Bakar ash-Shiddiq</h4>
+                            <ul>
+                                <li>Nama asli: Abdul Ka'bah</li>
+                                <li>Gelar: al-Shiddiq</li>
+                                <li>Khalifah ke-1</li>
+                                <li>Menjaga persatuan umat</li>
+                                <li>Menumpas nabi palsu & murtad</li>
+                                <li>Mengumpulkan Al-Qur'an (mushaf)</li>
+                                <li>Khalifah selama 2 tahun</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <h4>👤 Umar bin Khattab</h4>
+                            <ul>
+                                <li>Gelar: al-Faruq</li>
+                                <li>Amirul Mukminin</li>
+                                <li>Khalifah ke-2</li>
+                                <li>Keuangan negara & anti-korupsi</li>
+                                <li>Lembaga kepolisian & peradilan</li>
+                                <li>Kalender Hijriyah</li>
+                                <li>Pembangunan kota</li>
+                                <li>Khalifah selama 10 tahun</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">📚</div>
+                    <div>
+                        <div class="card-title">Glosarium (Kamus Kecil)</div>
+                    </div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Khulafaurrasyidin</span>
+                    <div class="glossary-def">Para pemimpin (khalifah) yang mendapat petunjuk Allah, yaitu 4 sahabat Nabi yang memimpin setelah Rasulullah wafat.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Khalifah</span>
+                    <div class="glossary-def">Pemimpin umat Islam setelah Rasulullah saw. wafat.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">al-Shiddiq</span>
+                    <div class="glossary-def">Gelar Abu Bakar yang artinya "yang sangat benar".</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">al-Faruq</span>
+                    <div class="glossary-def">Gelar Umar yang artinya "pembeda antara yang hak dan batil".</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Isra' Mi'raj</span>
+                    <div class="glossary-def">Perjalanan malam Nabi dari Masjidil Haram ke Masjidil Aqsha (Isra') lalu naik ke langit (Mi'raj).</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Mushaf</span>
+                    <div class="glossary-def">Kumpulan lembaran Al-Qur'an yang dibukukan menjadi satu kitab.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Riddah</span>
+                    <div class="glossary-def">Kemurtadan, yaitu keluar dari agama Islam.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Baitul Mal</span>
+                    <div class="glossary-def">Lembaga keuangan negara Islam untuk mengelola pendapatan dan pengeluaran negara.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Saqifah</span>
+                    <div class="glossary-def">Tempat bermusyawarahnya kaum Anshar dan Muhajirin untuk memilih khalifah pertama.</div>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-term">Amirul Mukminin</span>
+                    <div class="glossary-def">Gelar Umar yang artinya "Pemimpin Orang-orang Beriman".</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon gold">💡</div>
+                    <div>
+                        <div class="card-title">Hubungan dengan Kehidupan Sehari-hari</div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <div class="info-box-title">🗓️ Kalender Hijriyah</div>
+                    <p>Kalender yang kita gunakan untuk menentukan tanggal puasa, Idul Fitri, Idul Adha, dan hari besar Islam lainnya diciptakan oleh Umar bin Khattab!</p>
+                </div>
+                <div class="info-box gold">
+                    <div class="info-box-title">📖 Al-Qur'an yang Kita Baca</div>
+                    <p>Al-Qur'an yang kita baca sekarang dikumpulkan atas jasa Abu Bakar ash-Shiddiq. Tanpa beliau, ayat-ayat Al-Qur'an bisa hilang karena banyak penghafalnya yang gugur!</p>
+                </div>
+                <div class="info-box blue">
+                    <div class="info-box-title">⚖️ Pengadilan & KPK</div>
+                    <p>Lembaga peradilan dan pelaporan kekayaan pejabat (LHKSN) yang ada di Indonesia sekarang, berawal dari gagasan Umar bin Khattab!</p>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-primary" onclick="navigateTo('refleksi')">Lanjut ke Refleksi →</button>
+            </div>
+        </div>
+
+        <!-- PAGE: REFLEKSI -->
+        <div class="page" id="page-refleksi">
+            <div class="section-header">
+                <h2>💭 Refleksi Pembelajaran</h2>
+                <p>Renungkan apa yang telah kamu pelajari hari ini</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon purple">✍️</div>
+                    <div>
+                        <div class="card-title">Jurnal Belajarku</div>
+                        <div class="card-subtitle">Tuliskan jawabanmu dengan jujur!</div>
+                    </div>
+                </div>
+
+                <div class="reflection-item">
+                    <div class="reflection-question">1. Hal baru apa yang paling menarik yang kamu pelajari hari ini?</div>
+                    <textarea class="reflection-textarea" placeholder="Tulis jawabanmu di sini..."></textarea>
+                </div>
+
+                <div class="reflection-item">
+                    <div class="reflection-question">2. Keteladanan apa dari Abu Bakar atau Umar yang ingin kamu terapkan dalam kehidupan sehari-hari?</div>
+                    <textarea class="reflection-textarea" placeholder="Tulis jawabanmu di sini..."></textarea>
+                </div>
+
+                <div class="reflection-item">
+                    <div class="reflection-question">3. Bagaimana cara kamu menjaga persatuan di sekolah dan di NKRI?</div>
+                    <textarea class="reflection-textarea" placeholder="Tulis jawabanmu di sini..."></textarea>
+                </div>
+
+                <div class="reflection-item">
+                    <div class="reflection-question">4. Apa yang masih ingin kamu pelajari lebih lanjut tentang Khulafaurrasyidin?</div>
+                    <textarea class="reflection-textarea" placeholder="Tulis jawabanmu di sini..."></textarea>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">⭐</div>
+                    <div>
+                        <div class="card-title">Penilaian Dirimu</div>
+                        <div class="card-subtitle">Berikan penilaian untuk dirimu sendiri</div>
+                    </div>
+                </div>
+                <table class="char-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Pernyataan</th>
+                            <th>Penilaian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="text-align:left">Aku bisa menyebutkan nasab Abu Bakar dan Umar</td>
+                            <td><select class="char-select"><option>Pilih...</option><option>😊 Sudah paham</option><option>😐 Cukup paham</option><option>😟 Belum paham</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td style="text-align:left">Aku bisa menjelaskan dakwah mereka</td>
+                            <td><select class="char-select"><option>Pilih...</option><option>😊 Sudah paham</option><option>😐 Cukup paham</option><option>😟 Belum paham</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td style="text-align:left">Aku bisa menjelaskan jasa-jasa mereka</td>
+                            <td><select class="char-select"><option>Pilih...</option><option>😊 Sudah paham</option><option>😐 Cukup paham</option><option>😟 Belum paham</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td style="text-align:left">Aku terinspirasi untuk meneladani mereka</td>
+                            <td><select class="char-select"><option>Pilih...</option><option>😊 Sangat terinspirasi</option><option>😐 Cukup terinspirasi</option><option>😟 Kurang terinspirasi</option></select></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon gold">🏆</div>
+                    <div>
+                        <div class="card-title">Pencapaianmu!</div>
+                    </div>
+                </div>
+                <div id="final-badges" class="badge-grid">
+                    <div class="badge-item locked" id="final-badge-1">
+                        <div class="badge-icon">🧭</div>
+                        <div class="badge-name">Penjelajah</div>
+                    </div>
+                    <div class="badge-item locked" id="final-badge-2">
+                        <div class="badge-icon">📚</div>
+                        <div class="badge-name">Pencinta Ilmu</div>
+                    </div>
+                    <div class="badge-item locked" id="final-badge-3">
+                        <div class="badge-icon">🧠</div>
+                        <div class="badge-name">Anak Cerdas</div>
+                    </div>
+                    <div class="badge-item locked" id="final-badge-4">
+                        <div class="badge-icon">🌟</div>
+                        <div class="badge-name">Luar Biasa</div>
+                    </div>
+                    <div class="badge-item locked" id="final-badge-5">
+                        <div class="badge-icon">🏆</div>
+                        <div class="badge-name">Kampiun</div>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top:12px; font-weight:600; color:var(--primary);">
+                    Total Poin: <span id="final-score">0</span> ⭐ | Lencana: <span id="final-badge-count">0</span>/5 🏅
+                </p>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-gold" onclick="showFinalModal()">🎉 Selesai & Lihat Hasil!</button>
+            </div>
+        </div>
+
+    </div><!-- end content-area -->
+</div><!-- end main-app -->
+
+<!-- Final Modal -->
+<div class="modal-overlay" id="final-modal">
+    <div class="modal">
+        <div class="modal-icon" id="modal-icon">🏆</div>
+        <div class="modal-title" id="modal-title">Selamat!</div>
+        <div class="modal-text" id="modal-text">Kamu telah menyelesaikan petualangan belajar tentang Khulafaurrasyidin!</div>
+        <div style="margin:16px 0;">
+            <p style="font-size:1.2rem; font-weight:700; color:var(--primary);">Skor Akhir: <span id="modal-score">0</span> poin</p>
+            <p style="font-size:1rem; color:var(--gold);">Lencana: <span id="modal-badges">0</span>/5 🏅</p>
+        </div>
+        <button class="btn btn-primary" onclick="closeModal()">Tutup</button>
+    </div>
+</div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<script>
+// ============ APP STATE ============
+let state = {
+    score: 0,
+    badges: new Set(),
+    pagesVisited: new Set(['home']),
+    matchCorrect: 0,
+    tfAnswered: 0,
+    tfCorrect: 0,
+    quizAnswered: 0,
+    quizCorrect: 0,
+    currentQuiz: 0,
+    quizData: [],
+    quizAnswered_set: new Set()
+};
+
+// ============ QUIZ DATA ============
+const allQuizQuestions = [
+    {
+        q: "Nama Abu Bakar sebelum Islam adalah...",
+        options: ["Abdullah", "Abu Qohafah", "Abdul Ka'bah", "Abu Abdullah"],
+        correct: 2,
+        explanation: "Benar! Nama asli Abu Bakar sebelum Islam adalah Abdul Ka'bah. Setelah masuk Islam, Rasulullah memberinya nama Abdullah.",
+        level: "C1"
+    },
+    {
+        q: "Gelar al-Shiddiq diberikan kepada Abu Bakar karena...",
+        options: ["Orang pertama masuk Islam", "Selalu membenarkan apa yang disampaikan Rasulullah, terutama saat Isra' Mi'raj", "Sahabat terdekat Nabi yang paling kaya", "Pemimpin perang Yamamah"],
+        correct: 1,
+        explanation: "Tepat! Abu Bakar dijuluki al-Shiddiq (yang sangat benar) karena selalu membenarkan apa yang dibawa Rasulullah, terutama saat peristiwa Isra' Mi'raj ketika banyak orang tidak percaya.",
+        level: "C2"
+    },
+    {
+        q: "Siapa yang mengusulkan pengumpulan Al-Qur'an menjadi satu mushaf kepada Khalifah Abu Bakar?",
+        options: ["Ali bin Abi Thalib", "Utsman bin Affan", "Umar bin Khattab", "Zaid bin Tsabit"],
+        correct: 2,
+        explanation: "Benar! Umar bin Khattab yang mengusulkan pengumpulan Al-Qur'an karena khawatir Al-Qur'an hilang setelah banyak penghafalnya gugur dalam Perang Yamamah (700 penghafal gugur).",
+        level: "C1"
+    },
+    {
+        q: "Umar bin Khattab mendapat gelar al-Faruq. Apa artinya?",
+        options: ["Yang membenarkan kerasulan Muhammad", "Penjamin dakwah secara terang-terangan", "Pembeda antara yang hak dan batil", "Pemimpin orang-orang beriman"],
+        correct: 2,
+        explanation: "Tepat! al-Faruq artinya 'pembeda antara yang hak (benar) dan batil (salah)'. Gelar ini diberikan oleh Rasulullah karena keberanian Umar menegakkan kebenaran.",
+        level: "C2"
+    },
+    {
+        q: "Berikut yang BUKAN merupakan jasa Khalifah Abu Bakar adalah...",
+        options: ["Menumpas nabi palsu", "Mengumpulkan Al-Qur'an dalam satu mushaf", "Menciptakan kalender Hijriyah", "Menegakkan kewajiban salat dan zakat"],
+        correct: 2,
+        explanation: "Benar! Kalender Hijriyah diciptakan oleh Umar bin Khattab, bukan Abu Bakar. Jasa Abu Bakar meliputi menumpas nabi palsu, mengumpulkan Al-Qur'an, dan menegakkan syariat Islam.",
+        level: "C3"
+    },
+    {
+        q: "Gagasan Khalifah Umar bin Khattab yang mirip dengan tugas KPK di Indonesia saat ini adalah...",
+        options: ["Membangun gedung pengadilan", "Mewajibkan laporan harta kekayaan pejabat yang akan dilantik", "Melakukan tangkap tangan koruptor", "Mengangkat hakim-hakim"],
+        correct: 1,
+        explanation: "Tepat! Umar mewajibkan pendaftaran seluruh kekayaan pejabat yang akan dilantik untuk mencegah penyalahgunaan wewenang dan korupsi. Ini mirip dengan LHKSN yang diawasi KPK sekarang.",
+        level: "C4"
+    },
+    {
+        q: "Mengapa Abu Bakar tetap bersikukuh mengirim pasukan Usamah bin Zaid meskipun banyak yang tidak setuju?",
+        options: ["Karena Usamah adalah kerabat Nabi", "Untuk menunjukkan kekuatan Islam agar kabilah yang berniat memisah menjadi takut", "Karena ada perintah langsung dari Nabi", "Untuk menaklukkan Persia"],
+        correct: 1,
+        explanation: "Benar! Abu Bakar ingin membangkitkan kepercayaan diri kaum muslimin dan menunjukkan bahwa Islam tetap kuat. Strategi ini berhasil membuat kabilah yang berniat memisah menjadi takut.",
+        level: "C4"
+    },
+    {
+        q: "Jika kamu adalah seorang pemimpin seperti Umar bin Khattab, tindakan apa yang paling penting untuk mencontoh dari beliau dalam kehidupan modern?",
+        options: ["Menjadi paling kaya di antara rakyat", "Bersikap tegas, adil, transparan, dan peduli kepada rakyat kecil", "Membangun banyak istana", "Memerintah dengan kekuatan militer saja"],
+        correct: 1,
+        explanation: "Tepat! Umar dikenal tegas, adil, anti-korupsi (mencatat kekayaan pejabat), dan sangat peduli rakyat kecil (memanggul karung pangan sendiri). Ini teladan yang sangat relevan untuk pemimpin modern.",
+        level: "C5"
+    }
+];
+
+// ============ INITIALIZATION ============
+function startApp() {
+    document.getElementById('splash-screen').classList.add('hide');
+    setTimeout(() => {
+        document.getElementById('main-app').classList.add('show');
+        document.getElementById('splash-screen').style.display = 'none';
+        initQuiz();
+    }, 800);
+}
+
+// ============ NAVIGATION ============
+function navigateTo(pageId) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    
+    // Show target page
+    const targetPage = document.getElementById('page-' + pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+    }
+
+    // Update nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+    if (navItem) {
+        navItem.classList.add('active');
+        // Mark previous as completed
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(n => {
+            if (n.dataset.page !== pageId && state.pagesVisited.has(n.dataset.page)) {
+                n.classList.add('completed');
+            }
+        });
+    }
+
+    // Track visited
+    state.pagesVisited.add(pageId);
+    
+    // Update level progress
+    updateLevelProgress();
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Award badges
+    checkBadges();
+}
+
+function updateLevelProgress() {
+    const levels = ['home', 'objectives', 'apersepsi', 'materi-abu', 'materi-umar'];
+    const visited = ['home', 'objectives', 'apersepsi', 'materi-abu', 'materi-umar'];
+    
+    for (let i = 0; i < visited.length; i++) {
+        const dot = document.getElementById('lv' + (i + 1));
+        const line = document.getElementById('ll' + (i + 1));
+        
+        if (state.pagesVisited.has(visited[i])) {
+            if (dot) dot.classList.add('completed');
+            if (line) line.classList.add('completed');
+        }
+    }
+    
+    // Activate current
+    const currentIdx = visited.findIndex(v => {
+        const pages = ['home', 'objectives', 'apersepsi', 'materi-abu', 'materi-umar', 'aktivitas1', 'aktivitas2', 'kuis', 'rangkuman', 'refleksi'];
+        const currentGroup = pages.indexOf(document.querySelector('.page.active')?.id?.replace('page-', ''));
+        return pages.indexOf(v) === currentGroup;
+    });
+}
+
+// ============ TABS ============
+function switchTab(btn, tabId) {
+    const container = btn.closest('.tab-container');
+    container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tabId).classList.add('active');
+}
+
+// ============ ACCORDION ============
+function toggleAccordion(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    
+    // Close all in same accordion
+    header.closest('.accordion').querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+    header.closest('.accordion').querySelectorAll('.accordion-header').forEach(h => h.classList.remove('open'));
+    
+    if (!isOpen) {
+        body.classList.add('open');
+        header.classList.add('open');
+    }
+}
+
+// ============ CHECKLIST ============
+function toggleCheck(item) {
+    item.classList.toggle('checked');
+    const box = item.querySelector('.checklist-box');
+    if (item.classList.contains('checked')) {
+        box.innerHTML = '✓';
+    } else {
+        box.innerHTML = '';
+    }
+}
+
+// ============ MATCHING GAME ============
+let selectedMatch = null;
+let matchCount = 0;
+
+function selectMatch(card) {
+    if (card.classList.contains('matched')) return;
+    
+    if (!selectedMatch) {
+        selectedMatch = card;
+        card.classList.add('selected');
+    } else {
+        if (selectedMatch === card) {
+            card.classList.remove('selected');
+            selectedMatch = null;
+            return;
+        }
+        
+        // Check if different sides
+        if (selectedMatch.dataset.side === card.dataset.side) {
+            selectedMatch.classList.remove('selected');
+            selectedMatch = card;
+            card.classList.add('selected');
+            return;
+        }
+        
+        // Check match
+        if (selectedMatch.dataset.match === card.dataset.match) {
+            // Correct match!
+            selectedMatch.classList.remove('selected');
+            selectedMatch.classList.add('matched');
+            card.classList.add('matched');
+            matchCount++;
+            state.matchCorrect++;
+            addScore(5);
+            showToast('✅', 'Cocok! +5 poin');
+            
+            if (matchCount === 5) {
+                document.getElementById('match-result-1').innerHTML = '<p style="color:var(--success);">🎉 Luar biasa! Semua pasangan berhasil dicocokkan! +25 poin bonus!</p>';
+                addScore(25);
+                earnBadge('badge-cerdas');
+            }
+        } else {
+            // Wrong match
+            const prev = selectedMatch;
+            selectedMatch.classList.remove('selected');
+            selectedMatch.classList.add('wrong-match');
+            card.classList.add('wrong-match');
+            
+            setTimeout(() => {
+                prev.classList.remove('wrong-match');
+                card.classList.remove('wrong-match');
+            }, 800);
+            
+            showToast('❌', 'Belum tepat, coba lagi!');
+        }
+        selectedMatch = null;
+    }
+}
+
+// ============ TRUE/FALSE ============
+function checkTF(btn, answer) {
+    const item = btn.closest('.tf-item');
+    if (item.classList.contains('answered')) return;
+    
+    const correct = item.dataset.answer === 'true';
+    const isCorrect = answer === correct;
+    
+    item.classList.add('answered');
+    state.tfAnswered++;
+    
+    if (isCorrect) {
+        btn.classList.add('selected-correct');
+        state.tfCorrect++;
+        addScore(5);
+        showToast('✅', 'Benar! +5 poin');
+    } else {
+        btn.classList.add('selected-wrong');
+        // Show correct answer
+        const buttons = item.querySelectorAll('.tf-btn');
+        if (correct) {
+            buttons[0].classList.add('selected-correct');
+        } else {
+            buttons[1].classList.add('selected-correct');
+        }
+        showToast('❌', 'Belum tepat. Perhatikan jawaban yang benar!');
+    }
+    
+    if (state.tfAnswered === 8) {
+        const result = document.getElementById('tf-result');
+        if (state.tfCorrect >= 6) {
+            result.innerHTML = `<p style="color:var(--success);">🌟 Hebat! Kamu menjawab ${state.tfCorrect}/8 dengan benar!</p>`;
+            earnBadge('badge-ilmu');
+        } else {
+            result.innerHTML = `<p style="color:var(--warning);">💪 Kamu menjawab ${state.tfCorrect}/8. Terus belajar ya!</p>`;
+        }
+    }
+}
+
+// ============ QUIZ ============
+function initQuiz() {
+    state.quizData = [...allQuizQuestions].sort(() => Math.random() - 0.5);
+    state.currentQuiz = 0;
+    state.quizAnswered = 0;
+    state.quizCorrect = 0;
+    state.quizAnswered_set = new Set();
+    document.getElementById('quiz-total').textContent = state.quizData.length;
+    renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+    if (state.currentQuiz >= state.quizData.length) {
+        showQuizResult();
+        return;
+    }
+    
+    const q = state.quizData[state.currentQuiz];
+    const container = document.getElementById('quiz-container');
+    document.getElementById('quiz-current').textContent = state.currentQuiz + 1;
+    document.getElementById('quiz-progress').style.width = ((state.currentQuiz) / state.quizData.length * 100) + '%';
+    
+    let html = `
+        <div class="quiz-question" id="quiz-q-${state.currentQuiz}">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span style="background:var(--primary); color:white; padding:4px 10px; border-radius:8px; font-size:0.75rem; font-weight:700;">${q.level}</span>
+                <span style="font-size:0.8rem; color:var(--text-light);">Soal ${state.currentQuiz + 1}</span>
+            </div>
+            <div class="quiz-question-text">${q.q}</div>
+            <div class="quiz-options">
+    `;
+    
+    const letters = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, i) => {
+        html += `
+            <div class="quiz-option" onclick="answerQuiz(${state.currentQuiz}, ${i})">
+                <span class="option-letter">${letters[i]}</span>
+                <span>${opt}</span>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback-${state.currentQuiz}"></div>
+        </div>
+        <div style="text-align:center; margin-top:16px;">
+            <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuizQuestion()" style="display:none;">
+                ${state.currentQuiz < state.quizData.length - 1 ? 'Soal Berikutnya →' : 'Lihat Hasil 📊'}
+            </button>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function answerQuiz(qIdx, optIdx) {
+    if (state.quizAnswered_set.has(qIdx)) return;
+    state.quizAnswered_set.add(qIdx);
+    
+    const q = state.quizData[qIdx];
+    const isCorrect = optIdx === q.correct;
+    const questionEl = document.getElementById('quiz-q-' + qIdx);
+    const options = questionEl.querySelectorAll('.quiz-option');
+    
+    // Mark answers
+    options.forEach((opt, i) => {
+        if (i === q.correct) opt.classList.add('correct');
+        if (i === optIdx && !isCorrect) opt.classList.add('wrong');
+        opt.style.pointerEvents = 'none';
+    });
+    
+    // Show feedback
+    const feedback = document.getElementById('quiz-feedback-' + qIdx);
+    if (isCorrect) {
+        feedback.className = 'quiz-feedback show correct';
+        feedback.innerHTML = `✅ <strong>Benar!</strong> ${q.explanation}`;
+        state.quizCorrect++;
+        addScore(10);
+    } else {
+        feedback.className = 'quiz-feedback show wrong';
+        feedback.innerHTML = `❌ <strong>Kurang tepat.</strong> ${q.explanation}`;
+    }
+    
+    state.quizAnswered++;
+    
+    // Show next button
+    document.getElementById('quiz-next-btn').style.display = 'inline-flex';
+}
+
+function nextQuizQuestion() {
+    state.currentQuiz++;
+    if (state.currentQuiz >= state.quizData.length) {
+        showQuizResult();
+    } else {
+        renderQuizQuestion();
+    }
+}
+
+function showQuizResult() {
+    document.getElementById('quiz-container').innerHTML = '';
+    document.getElementById('quiz-progress').style.width = '100%';
+    document.getElementById('quiz-final-result').style.display = 'block';
+    
+    const score = state.quizCorrect;
+    const total = state.quizData.length;
+    const pct = (score / total * 100);
+    
+    document.getElementById('quiz-score-display').textContent = score + '/' + total;
+    
+    if (pct >= 80) {
+        document.getElementById('quiz-emoji').textContent = '🏆';
+        document.getElementById('quiz-result-title').textContent = 'Luar Biasa!';
+        document.getElementById('quiz-result-text').textContent = 'Kamu sangat memahami materi Khulafaurrasyidin! Pertahankan!';
+        earnBadge('badge-hebat');
+        triggerConfetti();
+    } else if (pct >= 60) {
+        document.getElementById('quiz-emoji').textContent = '🌟';
+        document.getElementById('quiz-result-title').textContent = 'Bagus!';
+        document.getElementById('quiz-result-text').textContent = 'Pemahamanmu sudah baik. Terus belajar untuk hasil yang lebih baik!';
+    } else {
+        document.getElementById('quiz-emoji').textContent = '💪';
+        document.getElementById('quiz-result-title').textContent = 'Terus Semangat!';
+        document.getElementById('quiz-result-text').textContent = 'Coba baca kembali materinya dan ulangi kuisnya. Kamu pasti bisa!';
+    }
+}
+
+function resetQuiz() {
+    document.getElementById('quiz-final-result').style.display = 'none';
+    initQuiz();
+}
+
+// ============ SCORING ============
+function addScore(points) {
+    state.score += points;
+    document.getElementById('total-score').textContent = state.score;
+    document.getElementById('final-score').textContent = state.score;
+}
+
+// ============ BADGES ============
+function earnBadge(badgeId) {
+    if (state.badges.has(badgeId)) return;
+    state.badges.add(badgeId);
+    
+    // Update home badges
+    const badge = document.getElementById(badgeId);
+    if (badge) {
+        badge.classList.remove('locked');
+        badge.classList.add('earned');
+        badge.classList.add('bounce-in');
+    }
+    
+    // Update reflection badges
+    const badgeMap = {
+        'badge-penjelajah': 'final-badge-1',
+        'badge-ilmu': 'final-badge-2',
+        'badge-cerdas': 'final-badge-3',
+        'badge-hebat': 'final-badge-4',
+        'badge-kampiun': 'final-badge-5'
+    };
+    
+    const finalBadge = document.getElementById(badgeMap[badgeId]);
+    if (finalBadge) {
+        finalBadge.classList.remove('locked');
+        finalBadge.classList.add('earned');
+    }
+    
+    document.getElementById('badge-count').textContent = state.badges.size;
+    document.getElementById('final-badge-count').textContent = state.badges.size;
+    
+    showToast('🏅', `Lencana baru: ${badge.querySelector('.badge-name')?.textContent || badgeId}!`);
+}
+
+function checkBadges() {
+    // Penjelajah: visited 5+ pages
+    if (state.pagesVisited.size >= 5 && !state.badges.has('badge-penjelajah')) {
+        earnBadge('badge-penjelajah');
+    }
+    
+    // Pencinta Ilmu: completed materi
+    if (state.pagesVisited.has('materi-abu') && state.pagesVisited.has('materi-umar') && !state.badges.has('badge-ilmu')) {
+        earnBadge('badge-ilmu');
+    }
+    
+    // Kampiun: all badges
+    if (state.badges.size >= 4 && !state.badges.has('badge-kampiun')) {
+        earnBadge('badge-kampiun');
+    }
+}
+
+// ============ TOAST ============
+function showToast(icon, text) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-text').textContent = text;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// ============ CONFETTI ============
+function triggerConfetti() {
+    const container = document.getElementById('confetti-container');
+    const colors = ['#FFB300', '#4CAF50', '#E53935', '#42A5F5', '#AB47BC', '#FF7043'];
+    
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (6 + Math.random() * 8) + 'px';
+        container.appendChild(piece);
+    }
+    
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 4000);
+}
+
+// ============ FINAL MODAL ============
+function showFinalModal() {
+    const modal = document.getElementById('final-modal');
+    const pct = state.quizData.length > 0 ? (state.quizCorrect / state.quizData.length * 100) : 0;
+    
+    if (pct >= 80) {
+        document.getElementById('modal-icon').textContent = '🏆';
+        document.getElementById('modal-title').textContent = 'Masya Allah, Luar Biasa!';
+        document.getElementById('modal-text').textContent = 'Kamu telah menyelesaikan petualangan belajar tentang Khulafaurrasyidin dengan sangat baik! Teladani akhlak Abu Bakar dan Umar dalam kehidupan sehari-hari.';
+        triggerConfetti();
+    } else if (pct >= 60) {
+        document.getElementById('modal-icon').textContent = '🌟';
+        document.getElementById('modal-title').textContent = 'Alhamdulillah, Bagus!';
+        document.getElementById('modal-text').textContent = 'Kamu telah menyelesaikan petualangan belajar! Terus tingkatkan pemahamanmu dengan membaca kembali materi.';
+    } else {
+        document.getElementById('modal-icon').textContent = '💪';
+        document.getElementById('modal-title').textContent = 'Tetap Semangat!';
+        document.getElementById('modal-text').textContent = 'Jangan menyerah! Coba baca kembali materinya dan ulangi kuisnya. InsyaAllah kamu pasti bisa!';
+    }
+    
+    document.getElementById('modal-score').textContent = state.score;
+    document.getElementById('modal-badges').textContent = state.badges.size;
+    modal.classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('final-modal').classList.remove('show');
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+    // Pre-warm
+});
+</script>
+
+</body>
+</html>
